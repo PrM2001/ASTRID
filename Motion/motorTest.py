@@ -3,11 +3,8 @@ import time
 
 # configure the serial connections (the parameters differs on the device you are connecting to)
 ser = serial.Serial(
-    port='/dev/ttyUSB0',
+    port='COM3',
     baudrate=115200,
-    parity=serial.PARITY_ODD,
-    stopbits=serial.STOPBITS_TWO,
-    bytesize=serial.SEVENBITS
 )
 
 ser.isOpen()
@@ -24,5 +21,5 @@ while True:
         pass
     print("ESP32: " + ser.readline().decode().strip())
     
-    # wait 5 seconds for next user input during idle
+    # wait 1 second for next user input during idle
     time.sleep(1)

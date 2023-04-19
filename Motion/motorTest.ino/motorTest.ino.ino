@@ -1,7 +1,7 @@
 // defines pins
-const int stepPin = 6;  // PUL - Pulse
-const int dirPin = 7;   // DIR - Direction
-const int enPin = 8;    // ENA - Enable
+const int stepPin = 15;  // PUL - Pulse
+const int dirPin = 32;   // DIR - Direction
+//const int enPin = 14;    // ENA - Enable
 const int idleDelay = 15625;  // delay in microseconds for idle mode (32 microsteps per second)
 const int idleRequestDelay = 5000;  // delay in milliseconds to request new input during idle mode
 
@@ -9,10 +9,10 @@ void setup() {
   // sets the pins as Outputs
   pinMode(stepPin, OUTPUT); 
   pinMode(dirPin, OUTPUT);
-  pinMode(enPin, OUTPUT);
-  digitalWrite(enPin, LOW);
+  //pinMode(enPin, OUTPUT);
+  //digitalWrite(enPin, LOW);
   // initialize serial communication
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {
@@ -41,6 +41,7 @@ void loop() {
       if (Serial.available() > 0) {
         // read the incoming data
         String data = Serial.readStringUntil('\n');
+
         // convert the data to an integer value
         int steps = data.toInt();
         // enable motor direction to move
@@ -51,6 +52,7 @@ void loop() {
           delayMicroseconds(500);
           digitalWrite(stepPin, LOW);
           delayMicroseconds(500);
+          
         }
         // send response to Python
         Serial.println("Motor rotated " + String(steps) + " microsteps");
@@ -60,6 +62,13 @@ void loop() {
       delayMicroseconds(idleDelay);
       digitalWrite(stepPin, LOW);
       delayMicroseconds(idleDelay);
+      // for(int x = 0; x < 200 * 27; x++){
+      //   digitalWrite(stepPin,HIGH); 
+      //   delayMicroseconds(250); 
+      //   digitalWrite(stepPin,LOW); 
+      //   delayMicroseconds(250); 
+      //   Serial.println(String(x));
+      //}      
     }
   }
 }
