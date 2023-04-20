@@ -6,18 +6,26 @@ const int decStepPin = 10;  //DEC PUL - Pulse
 const int decDirPin = 11;   //DEC DIR - Direction
 const int decEnPin = 12;    //DEC ENA - Enable
 
-const unsigned long siderealRateDelay = 16621; // microseconds delay between each RA microstep
+const float siderealSecs = 86164.0905; //seconds in a sidereal day
+const int reduction = 30 * 27; //total gear reduction
+const int microsteps = 32; //current microstep setting
+
+const unsigned long siderealRate = 360 * (1/siderealSecs); //degrees per second for tracking
+const unsigned long siderealRateDelay = 1/(2 * siderealRate * reduction // microseconds delay between each RA microstep
+                                           * microsteps / 1000000);  //divide by 2 since delay both before and after 
+
+const float stepsPerDeg = reduction/(1.8/microsteps)
 
 void setup() {
   // Sets the pins as Outputs
   pinMode(raStepPin, OUTPUT); 
   pinMode(raDirPin, OUTPUT);
-  pinMode(raEnPin, OUTPUT);
+  //pinMode(raEnPin, OUTPUT);
   pinMode(decStepPin, OUTPUT); 
   pinMode(decDirPin, OUTPUT);
-  pinMode(decEnPin, OUTPUT);
-  digitalWrite(raEnPin, LOW);
-  digitalWrite(decEnPin, LOW);
+  //pinMode(decEnPin, OUTPUT);
+  //digitalWrite(raEnPin, LOW);
+  //digitalWrite(decEnPin, LOW);
 }
 
 void loop() {
@@ -25,43 +33,45 @@ void loop() {
   static bool isTracking = false;
 
   if (Serial.available() > 0) {
-    int raMicrosteps = 0;
-    int decMicrosteps = 0;
-    int readBytes = Serial.readBytes((char *)&raMicrosteps, sizeof(raMicrosteps));
-    if (readBytes == sizeof(raMicrosteps)) {
-      Serial.readBytes((char *)&decMicrosteps, sizeof(decMicrosteps));
+    int raError = 0;
+    int decError = 0;
+
+    //check the below
+    int readBytes = Serial.readBytes((char *)&raError, sizeof(raError));
+    if (readBytes == sizeof(raError)) {
+      Serial.readBytes((char *)&decError, sizeof(decError));
 
       // Set the direction of the motors
-      digitalWrite(raDirPin, raMicrosteps > 0 ? HIGH : LOW);
-      digitalWrite(decDirPin, decMicrosteps > 0 ? HIGH : LOW);
+      digitalWrite(raDirPin, raError > 0 ? HIGH : LOW);
+      digitalWrite(decDirPin, decError > 0 ? HIGH : LOW);
 
-      // Enable the motors
-      digitalWrite(raEnPin, HIGH);
-      digitalWrite(decEnPin, HIGH);
+      // Enable the motors check if want do this
+      //digitalWrite(raEnPin, HIGH);
+      //digitalWrite(decEnPin, HIGH);
 
       // Move the motors
-      for (int i = 0; i < abs(raMicrosteps); i++) {
+      for (int i = 0; i < abs(raError * stepsPerDeg); i++) {
         digitalWrite(raStepPin, HIGH);
-        delayMicroseconds(500);
+        delayMicroseconds(250);
         digitalWrite(raStepPin, LOW);
-        delayMicroseconds(500);
+        delayMicroseconds(250);
       }
-      for (int i = 0; i < abs(decMicrosteps); i++) {
+      for (int i = 0; i < abs(decError * stepsPerDeg); i++) {
         digitalWrite(decStepPin, HIGH);
-        delayMicroseconds(500);
+        delayMicroseconds(250);
         digitalWrite(decStepPin, LOW);
-        delayMicroseconds(500);
+        delayMicroseconds(250);
       }
 
       // Disable the motors
-      digitalWrite(raEnPin, LOW);
-      digitalWrite(decEnPin, LOW);
+      //digitalWrite(raEnPin, LOW);
+      //digitalWrite(decEnPin, LOW);
 
       // Indicate that the instruction has been completed
       Serial.write("done", 4);
       
       // Start tracking if the instruction is 0 steps
-      if (raMicrosteps == 0 && decMicrosteps == 0) {
+      if (raError == 0 && decError == 0) {
         isTracking = true;
       }
       else {

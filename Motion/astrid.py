@@ -2,6 +2,7 @@ import serial
 import time
 import os
 import sys 
+import jog
 from tetra3_master.tetra3 import Tetra3
 from PIL import Image
 from pathlib import Path
@@ -29,6 +30,9 @@ class ASTRID:
         
         self.raBounds = [0,360]
         self.decBounds = [-90, 90]
+
+        self.gearReduction = 27 * 30
+        self.microSteps = 32
 
     def isUnsafe(self, ra, dec):
         return (ra < self.raBounds[0] or ra > self.raBounds[1] or dec < self.decBounds[0] or dec > self.decBounds[1])
@@ -76,9 +80,12 @@ class ASTRID:
 
 
 
-def main():
+def main(): 
+    print('hello')
+    astrid = ASTRID()
+    print('world')
     # Open a serial connection to the controller.ino
-    ser = serial.Serial('COM3', 115200) # Change 'COM3' to the actual port number
+    esp32 = serial.Serial(port='COM4', baudrate=115200, timeout=.1) # Change 'COM3' to the actual port number
     # Create instance and load default_database (built with max_fov=12 and the rest as default)
     t3 = Tetra3('13_FOV_Database')
 
@@ -89,29 +96,25 @@ def main():
         current_ra, current_dec, desired_ra, desired_dec = astrid.observe(sys.argv)
         
         # Calculate the number of microsteps for each axis
-        ra_error = (desired_ra - current_ra) ((1.8/32)/810)
-        dec_error = (desired_dec - current_dec)  ((1.8/32)/810)
+        ra_error = (desired_ra - current_ra)
+        dec_error = (desired_dec - current_dec)
 
-        ra_steps = ra_error / ((1.8/32)/810)
-        dec_steps = dec_error / ((1.8/32)/810)
+        # ra_steps = ra_error / ((1.8/32)/810)
+        # dec_steps = dec_error / ((1.8/32)/810)
 
         # Check if the error is less than 10 arcseconds
         if abs(ra_error) < 10 and abs(dec_error) < 10:
             # Send an instruction of 0 steps
-            ser.write(b"0 0\n")
+            esp32.write(b"0 0\n")
         else:                  
             # Send the number of microsteps to the controller.ino
-            ser.write(f"{int(ra_error)} {int(dec_error)}\n".encode())
+            esp32.write(f"{int(ra_error)} {int(dec_error)}\n".encode())
         
         # Wait for the controller.ino to finish the previous command
-        while ser.in_waiting == 0:
+        while esp32.in_waiting == 0:
             time.sleep(0.1)
+        #need to read and remove everything in buffer
         
-
-        
-        # Wait for the controller.ino to finish the command
-        while ser.in_waiting == 0:
-            time.sleep(0.1)
 
 
 if __name__ == "__main__":
