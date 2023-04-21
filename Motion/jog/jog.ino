@@ -54,21 +54,21 @@ void loop() {
   if (motorNum == 0) {
     stepPin = raStepPin;
     dirPin = raStepPin;
-    enPin = raEnPin;
+    //enPin = raEnPin;
 
   } else {
     stepPin = decStepPin;
     dirPin = decStepPin;
-    enPin = decEnPin;    
+    //enPin = decEnPin;    
   }
     
   digitalWrite(dirPin, steps > 0 ? HIGH : LOW);
   // make pulses to rotate the motor
-  for (int i = 0; i < steps; i++) {
+  for (int i = 0; i < abs(steps); i++) {
     digitalWrite(stepPin, HIGH);
-    delayMicroseconds(500);
+    delayMicroseconds(100);
     digitalWrite(stepPin, LOW);
-    delayMicroseconds(500);
+    delayMicroseconds(100);
   }
     
   // send response to Python
