@@ -1,6 +1,10 @@
 import serial
 import time
 
+microsteps = 1
+reduction = 26.85 * 30
+
+
 def jog():
     # configure the serial connections (the parameters differs on the device you are connecting to)
     ser = serial.Serial(
@@ -27,7 +31,7 @@ def jog():
 
         angle = input("Enter angle in degrees to turn")
 
-        num
+        num_steps = angle * ((1.8/microsteps)/reduction) 
         
         # send number of microsteps to ESP32
         ser.write(num_steps.encode())
