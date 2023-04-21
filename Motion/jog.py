@@ -25,7 +25,9 @@ def jog():
 
         ser.write(num_motor.encode())
 
-        num_steps = input("Enter angle in degrees to turn")
+        angle = input("Enter angle in degrees to turn")
+
+        num
         
         # send number of microsteps to ESP32
         ser.write(num_steps.encode())

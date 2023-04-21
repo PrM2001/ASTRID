@@ -84,13 +84,13 @@ void loop() {
     // Only update the RA motor when the sidereal time has elapsed
     unsigned long currentTime = micros();
     if (currentTime - lastUpdateTime >= siderealRateDelay) {
-      digitalWrite(raEnPin, HIGH);
+      //digitalWrite(raEnPin, HIGH);
       digitalWrite(raDirPin, HIGH);
       digitalWrite(raStepPin, HIGH);
       delayMicroseconds(500);
       digitalWrite(raStepPin, LOW);
       delayMicroseconds(500);
-      digitalWrite(raEnPin, LOW);
+      //digitalWrite(raEnPin, LOW);
       lastUpdateTime = currentTime;
     }
   }
