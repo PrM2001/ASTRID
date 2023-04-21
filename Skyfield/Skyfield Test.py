@@ -9,9 +9,16 @@ t = ts.now()
 
 # Load the JPL ephemeris DE421 (covers 1900-2050).
 planets = load('de421.bsp')
+<<<<<<< HEAD
 
 earth, jupiter = planets['earth'], planets['venus barycenter']
 
+=======
+#moons = load('jup365.bsp')
+print(planets)
+earth, jupiter = planets['earth'], planets['jupiter barycenter']
+#ganymede = moons['ganymede']
+>>>>>>> 2f14263c932847ab6551dca2ebd7363262526c7d
 
 # What's the position of Mars, viewed from Earth?
 astrometric = earth.at(t).observe(jupiter).apparent()
