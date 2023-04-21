@@ -22,4 +22,4 @@ while True:
     print("ESP32: " + ser.readline().decode().strip())
     
     # wait 1 second for next user input during idle
-    time.sleep(1)
+    time.sleep(0.5)
