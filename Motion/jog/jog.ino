@@ -27,7 +27,7 @@ void setup() {
     Serial.println(raStepsStr);
     raStepsInt = raStepsStr.toInt();
     
-    while !(Serial.available()) {
+    while (!Serial.available()) {
       delay(1)
     }
 
