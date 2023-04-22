@@ -28,7 +28,7 @@ void setup() {
     raStepsInt = raStepsStr.toInt();
     
     while !(Serial.available()) {
-      delay(1)
+      delay(1);
     }
 
     decStepsStr = Serial.readString();
@@ -50,7 +50,7 @@ void setup() {
     delayMicroseconds(200); 
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(200);
-    delay(1)  
+    delay(1);
   }
 
   if (decStepsInt > 0){
@@ -66,7 +66,7 @@ void setup() {
     delayMicroseconds(200); 
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(200);
-    delay(1)  
+    delay(1);  
   }
 }
 
