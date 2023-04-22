@@ -1,13 +1,13 @@
 // defines pins
-const int raStepPin = 15;  // RA PUL - RA Pulse
+const int raStepPin = 27;  // RA PUL - RA Pulse
 const int raDirPin = 33;   // RA DIR - RA Direction
 //const int raEnPin = 14;    // RA ENA - RA Enable
 
 
 //FIX THESE BEFORE RUNNING!!!!!!!
 
-const int decStepPin = 32;  // Dec PUL - Dec Pulse FIX THESE BEFORE RUNNING!!!!!!!
-const int decDirPin = 14;   // Dec DIR - Dec Direction
+const int decStepPin = 15;  // Dec PUL - Dec Pulse FIX THESE BEFORE RUNNING!!!!!!!
+const int decDirPin = 32;   // Dec DIR - Dec Direction
 //const int decEnPin = 8;    // Dec ENA - Dec Enable
 
 const int reduction = 30 * 26.85; //total gear reduction
@@ -19,23 +19,44 @@ String decStepsStr;
 int raStepsInt;
 int decStepsInt;
 
-
 void setup() {
-  if (Serial.available()){
-    raStepsStr = Serial.readString();
-    Serial.print("Received RA Value: ");
-    Serial.println(raStepsStr);
-    raStepsInt = raStepsStr.toInt();
-    
-    while !(Serial.available()) {
-      delay(1);
-    }
+  // sets the pins as Outputs
+  pinMode(raStepPin, OUTPUT); 
+  pinMode(raDirPin, OUTPUT);
 
-    decStepsStr = Serial.readString();
-    Serial.print("Received Dec Value: ");
-    Serial.println(decStepsStr);
-    decStepsInt = decStepsStr.toInt();
+  pinMode(decStepPin, OUTPUT); 
+  pinMode(decDirPin, OUTPUT);
+  //pinMode(enPin, OUTPUT);
+  //digitalWrite(enPin, LOW);
+  // initialize serial communication
+  Serial.begin(115200);
+}
+
+
+
+
+
+void loop() {
+  Serial.print(" ");
+
+  while (!Serial.available()) {
+    delay(1);
   }
+
+  raStepsStr = Serial.readString();
+  raStepsInt = raStepsStr.toInt();
+  Serial.print("Received RA Value: ");
+  Serial.println(raStepsStr);
+  
+  while (!Serial.available()) {
+    delay(1);
+  }
+
+  decStepsStr = Serial.readString();
+  decStepsInt = decStepsStr.toInt();
+  Serial.print("Received Dec Value: ");
+  Serial.println(decStepsStr);
+
 
   if (raStepsInt > 0){
     digitalWrite(raDirPin,HIGH);
@@ -46,9 +67,9 @@ void setup() {
   
   for (int i = 0; i < abs(raStepsInt); i++) {
     
-    digitalWrite(stepPin,HIGH); 
+    digitalWrite(raStepPin,HIGH); 
     delayMicroseconds(200); 
-    digitalWrite(stepPin,LOW); 
+    digitalWrite(raStepPin,LOW); 
     delayMicroseconds(200);
     delay(1);
   }
@@ -60,11 +81,10 @@ void setup() {
     digitalWrite(decDirPin,LOW);    
   }
 
-  for (int i = 0; i < abs(decStepsInt); i++)) {
-    digitalWrite(dirPin,HIGH);
-    digitalWrite(stepPin,HIGH); 
+  for (int i = 0; i < abs(decStepsInt); i++) {
+    digitalWrite(decStepPin,HIGH); 
     delayMicroseconds(200); 
-    digitalWrite(stepPin,LOW); 
+    digitalWrite(decStepPin,LOW); 
     delayMicroseconds(200);
     delay(1);  
   }
