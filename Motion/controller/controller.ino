@@ -1,14 +1,18 @@
 //defines pins
-const int raStepPin = 6;  //RA PUL - Pulse
-const int raDirPin = 7;   //RA DIR - Direction
-const int raEnPin = 8;    //RA ENA - Enable
-const int decStepPin = 10;  //DEC PUL - Pulse
-const int decDirPin = 11;   //DEC DIR - Direction
-const int decEnPin = 12;    //DEC ENA - Enable
+const int raStepPin = 15;  //RA PUL - Pulse
+const int raDirPin = 33;   //RA DIR - Direction
+//const int raEnPin = 8;    //RA ENA - Enable
+const int decStepPin = 32;  //DEC PUL - Pulse
+const int decDirPin = 14;   //DEC DIR - Direction
+//const int decEnPin = 12;    //DEC ENA - Enable
 
 const float siderealSecs = 86164.0905; //seconds in a sidereal day
-const int reduction = 30 * 27; //total gear reduction
+const int reduction = 30 * 26.85; //total gear reduction
 const int microsteps = 32; //current microstep setting
+
+int raSteps;
+int decSteps;
+
 
 const unsigned long siderealRate = 360 * (1/siderealSecs); //degrees per second for tracking
 const unsigned long siderealRateDelay = 1/(2 * siderealRate * reduction // microseconds delay between each RA microstep
@@ -50,6 +54,23 @@ void loop() {
       //digitalWrite(decEnPin, HIGH);
 
       // Move the motors
+
+    if abs()
+    for (decsteps){
+        digitalWrite(raStepPin, HIGH);
+        digitalWrite(decStepPin, HIGH);
+        delayMicroseconds(100);
+        digitalWrite(raStepPin, LOW);
+        digitalWrite(decStepPin, LOW);
+        delayMicroseconds(100);
+    }
+
+    for(rasteps-decsteps)
+
+
+
+
+
       for (int i = 0; i < abs(raError * stepsPerDeg); i++) {
         digitalWrite(raStepPin, HIGH);
         delayMicroseconds(250);

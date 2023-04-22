@@ -1,17 +1,17 @@
 // defines pins
 const int raStepPin = 15;  // RA PUL - RA Pulse
-const int raDirPin = 32;   // RA DIR - RA Direction
+const int raDirPin = 33;   // RA DIR - RA Direction
 //const int raEnPin = 14;    // RA ENA - RA Enable
 
 
 //FIX THESE BEFORE RUNNING!!!!!!!
 
-const int decStepPin = 6;  // Dec PUL - Dec Pulse FIX THESE BEFORE RUNNING!!!!!!!
-const int decDirPin = 7;   // Dec DIR - Dec Direction
+const int decStepPin = 32;  // Dec PUL - Dec Pulse FIX THESE BEFORE RUNNING!!!!!!!
+const int decDirPin = 14;   // Dec DIR - Dec Direction
 //const int decEnPin = 8;    // Dec ENA - Dec Enable
 
-const int reduction = 30 * 27; //total gear reduction
-const int microsteps = 32; //current microstep setting
+const int reduction = 30 * 26.85; //total gear reduction
+const int microsteps = 1; //current microstep setting
 
 int stepPin;
 int dirPin;
