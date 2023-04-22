@@ -2,7 +2,7 @@
 const int stepPin = 15;  // PUL - Pulse
 const int dirPin = 32;   // DIR - Direction
 //const int enPin = 14;    // ENA - Enable
-const int idleDelay = 15625;  // delay in microseconds for idle mode (32 microsteps per second)
+const int idleDelay = 250;  // delay in microseconds for idle mode (32 microsteps per second)
 const int idleRequestDelay = 5000;  // delay in milliseconds to request new input during idle mode
 
 void setup() {

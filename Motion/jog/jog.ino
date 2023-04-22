@@ -123,8 +123,5 @@ void setup() {
 //     digitalWrite(stepPin, LOW);
 //     delayMicroseconds(100);
 //   }
-    
-//   // send response to Python
-//   Serial.println("Motor rotated " + String(steps) + " microsteps");
   
 // }

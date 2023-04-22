@@ -17,6 +17,7 @@ def jog():
     while True:
         # get user input for number of microsteps
         
+<<<<<<< HEAD
         # whichMotor = None
         # while (whichMotor == None):
         #     whichMotor = input("RA or Dec? ")
@@ -45,6 +46,26 @@ def jog():
 
         ser.write(raSteps.encode())
         ser.write(decSteps.encode())
+=======
+        whichMotor = None
+        while (whichMotor == None):
+            whichMotor = input("RA or Dec? ")
+            if whichMotor in ['RA', 'r', 'ra', 'right ascension', 'R']:
+                num_motor = 0
+            elif  whichMotor in ['Dec', 'd', 'dec', 'declination', 'D']:
+                num_motor = 1
+            else:
+                print('Not a valid axis')
+
+        ser.write(str(num_motor).encode())
+
+        angle = float(input("Enter angle in degrees to turn"))
+
+        num_steps = int(angle * (1.8/microsteps)/reduction)
+        
+        # send number of microsteps to ESP32
+        ser.write(str(num_steps).encode())
+>>>>>>> fd14a50557b02827aeef7a275bb5ccd5ad8e5250
         
         # wait for ESP32 to finish turning the stepper motor
         while ser.inWaiting() < 1:
