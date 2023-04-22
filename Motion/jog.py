@@ -12,29 +12,39 @@ def jog():
         baudrate=115200,
     )
 
-    ser.isOpen()
+    # ser.isOpen()
 
     while True:
         # get user input for number of microsteps
         
-        whichMotor = None
-        while (whichMotor == None):
-            whichMotor = input("RA or Dec? ")
-            if whichMotor in ['RA', 'r', 'ra', 'right ascension']:
-                num_motor = 0
-            elif  whichMotor in ['Dec', 'd', 'dec', 'declination']:
-                num_motor = 1
-            else:
-                print('Not a valid axis')
+        # whichMotor = None
+        # while (whichMotor == None):
+        #     whichMotor = input("RA or Dec? ")
+        #     if whichMotor in ['RA', 'r', 'ra', 'right ascension']:
+        #         num_motor = 0
+        #     elif  whichMotor in ['Dec', 'd', 'dec', 'declination']:
+        #         num_motor = 1
+        #     else:
+        #         print('Not a valid axis')
 
-        ser.write(num_motor.encode())
+        # ser.write(num_motor.encode())
 
-        angle = input("Enter angle in degrees to turn")
+        # angle = input("Enter angle in degrees to turn")
 
-        num_steps = angle * ((1.8/microsteps)/reduction) 
+        # num_steps = angle * ((1.8/microsteps)/reduction) 
         
-        # send number of microsteps to ESP32
-        ser.write(num_steps.encode())
+        # # send number of microsteps to ESP32
+        # ser.write(num_steps.encode())
+
+
+        raAngle = input("Enter RA angle to move in degrees:\n")
+        decAngle = input("Enter Dec angle to move in degrees:\n")
+
+        raSteps = raAngle /(1.8/(30 * 26.85))
+        decSteps = decAngle /(1.8/(30 * 26.85))
+
+        ser.write(raSteps.encode())
+        ser.write(decSteps.encode())
         
         # wait for ESP32 to finish turning the stepper motor
         while ser.inWaiting() < 1:
