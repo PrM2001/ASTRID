@@ -20,21 +20,21 @@ def jog():
         whichMotor = None
         while (whichMotor == None):
             whichMotor = input("RA or Dec? ")
-            if whichMotor in ['RA', 'r', 'ra', 'right ascension']:
+            if whichMotor in ['RA', 'r', 'ra', 'right ascension', 'R']:
                 num_motor = 0
-            elif  whichMotor in ['Dec', 'd', 'dec', 'declination']:
+            elif  whichMotor in ['Dec', 'd', 'dec', 'declination', 'D']:
                 num_motor = 1
             else:
                 print('Not a valid axis')
 
-        ser.write(num_motor.encode())
+        ser.write(str(num_motor).encode())
 
-        angle = input("Enter angle in degrees to turn")
+        angle = float(input("Enter angle in degrees to turn"))
 
-        num_steps = angle * ((1.8/microsteps)/reduction) 
+        num_steps = int(angle * (1.8/microsteps)/reduction)
         
         # send number of microsteps to ESP32
-        ser.write(num_steps.encode())
+        ser.write(str(num_steps).encode())
         
         # wait for ESP32 to finish turning the stepper motor
         while ser.inWaiting() < 1:

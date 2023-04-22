@@ -72,6 +72,6 @@ void loop() {
   }
     
   // send response to Python
-  Serial.println("Motor rotated " + String(steps) + " microsteps");
+  Serial.write("Motor rotated " + String(steps) + " microsteps");
   
 }
