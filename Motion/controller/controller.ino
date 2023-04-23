@@ -1,10 +1,10 @@
 //defines pins
-const int raStepPin = 15;  //RA PUL - Pulse
+const int raStepPin = 27;  //RA PUL - Pulse
 const int raDirPin = 33;   //RA DIR - Direction
-//const int raEnPin = 8;    //RA ENA - Enable
-const int decStepPin = 32;  //DEC PUL - Pulse
-const int decDirPin = 14;   //DEC DIR - Direction
-//const int decEnPin = 12;    //DEC ENA - Enable
+
+const int decStepPin = 15;  //DEC PUL - Pulse
+const int decDirPin = 32;   //DEC DIR - Direction
+
 
 const float siderealSecs = 86164.0905; //seconds in a sidereal day
 const int reduction = 30 * 26.85; //total gear reduction
@@ -24,12 +24,10 @@ void setup() {
   // Sets the pins as Outputs
   pinMode(raStepPin, OUTPUT); 
   pinMode(raDirPin, OUTPUT);
-  //pinMode(raEnPin, OUTPUT);
+
   pinMode(decStepPin, OUTPUT); 
   pinMode(decDirPin, OUTPUT);
-  //pinMode(decEnPin, OUTPUT);
-  //digitalWrite(raEnPin, LOW);
-  //digitalWrite(decEnPin, LOW);
+
 }
 
 void loop() {
