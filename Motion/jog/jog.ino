@@ -78,38 +78,38 @@ void loop() {
     for (int i = 0; i < raStepsInt; i++) { 
       digitalWrite(raStepPin,HIGH); 
       digitalWrite(decStepPin,HIGH); 
-      delayMicroseconds(200); 
+      delayMicroseconds(100); 
       digitalWrite(raStepPin,LOW); 
       digitalWrite(decStepPin,LOW); 
-      delayMicroseconds(200);
-      delay(1);
+      delayMicroseconds(100);
+      delay(0.5);
     }
 
     for (int i = 0; i < decStepsInt - raStepsInt; i++) {  
       digitalWrite(decStepPin,HIGH); 
-      delayMicroseconds(200); 
+      delayMicroseconds(100); 
       digitalWrite(decStepPin,LOW); 
-      delayMicroseconds(200);
-      delay(1);
+      delayMicroseconds(100);
+      delay(0.5);
     }
   }
   else {
     for (int i = 0; i < decStepsInt; i++) { 
       digitalWrite(raStepPin,HIGH); 
       digitalWrite(decStepPin,HIGH); 
-      delayMicroseconds(200); 
+      delayMicroseconds(100); 
       digitalWrite(raStepPin,LOW); 
       digitalWrite(decStepPin,LOW); 
-      delayMicroseconds(200);
-      delay(1);
+      delayMicroseconds(100);
+      delay(0.5);
     }
 
     for (int i = 0; i < raStepsInt - decStepsInt; i++) {  
       digitalWrite(raStepPin,HIGH); 
-      delayMicroseconds(200); 
+      delayMicroseconds(100); 
       digitalWrite(raStepPin,LOW); 
-      delayMicroseconds(200);
-      delay(1);
+      delayMicroseconds(100);
+      delay(0.5);
     }
   }
 

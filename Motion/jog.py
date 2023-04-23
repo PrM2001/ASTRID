@@ -2,7 +2,7 @@ import serial
 import time
 
 microsteps = 1
-reduction = 26.85 * 30
+reduction = 26.85 * 30 * 8
 
 
 def jog():
@@ -20,7 +20,7 @@ def jog():
         ser.flushInput()
 
         raAngle = input("Enter RA angle to move in degrees:\n")
-        raSteps =  str(int(float(raAngle) /(1.8/(30 * 26.85))))
+        raSteps =  str(int(float(raAngle) /(1.8/(reduction))))
 
         ser.write(raSteps.encode())
         while ser.inWaiting() < 1:
@@ -30,7 +30,7 @@ def jog():
 
 
         decAngle = input("Enter Dec angle to move in degrees:\n")
-        decSteps = str(int(float(decAngle) /(1.8/(30 * 26.85))))
+        decSteps = str(int(float(decAngle) /(1.8/(reduction))))
 
         ser.write(decSteps.encode())
         while ser.inWaiting() < 1:
