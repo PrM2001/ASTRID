@@ -44,7 +44,6 @@ def jog():
         # print("ESP32: " + ser.readline())
         
         # wait 1 second for next user input during idle
-        time.sleep(1)
 
 if __name__ == "__main__":
     jog()

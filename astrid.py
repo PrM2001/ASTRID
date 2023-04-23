@@ -34,7 +34,7 @@ class ASTRID:
         self.decWindow = 40
 
         self.gearReduction = 26.85 * 30
-        self.microSteps = 1
+        self.microSteps = 8
 
     def isUnsafe(self, ra, dec):
         return (ra < self.raBounds[0] or ra > self.raBounds[1] or dec < self.decBounds[0] or dec > self.decBounds[1])
@@ -115,6 +115,10 @@ def main():
 
 
     while True:
+        while esp32.inWaiting() < 1:
+            time.sleep(0.2)
+        esp32.flushInput()
+
         #set all the coordinates to None for the check below
         current_ra, current_dec, desired_ra, desired_dec = None, None, None, None
 
@@ -129,26 +133,44 @@ def main():
 
         ra_error = (desired_ra - current_ra)
         #make smol angle rather than big here
+        while ra_error > 180:
+            ra_error = ra_error - 360
+        while ra_error < -180:
+            ra_error = ra_error + 360
 
         dec_error = (desired_dec - current_dec)
 
-        ra_steps = ra_error / ((1.8/astrid.microsteps)/astrid.reduction)
-        dec_steps = dec_error / ((1.8/astrid.microsteps)/astrid.reduction)
 
-        # Check if the error is less than 10 arcseconds
+
         if abs(ra_error) < astrid.raWindow and abs(dec_error) < astrid.decWindow:
-            # Send an instruction of 0 steps
-            esp32.write(f"{0} {0}\n".encode())
-        else:                  
-            # Send the number of microsteps to the controller.ino
-            esp32.write(f"{int(ra_error)} {int(dec_error)}\n".encode())
-        
-        # Wait for the controller.ino to finish the previous command
-        while esp32.in_waiting == 0:
-            time.sleep(0.1)
+            ra_steps, dec_steps = '0','0' 
+        else:
+            ra_steps = str(int(ra_error / ((1.8/astrid.microsteps)/astrid.reduction)))
+            dec_steps = str(int(dec_error / ((1.8/astrid.microsteps)/astrid.reduction)))
 
-        #need to read and remove everything in buffer
-        esp32.reset_input_buffer()
+        msg = ra_steps+','+dec_steps+',' 
+
+        esp32.write(msg.encode())
+        while esp32.inWaiting() < 1:
+            pass
+        while esp32.inWaiting() > 0:
+            print("ESP32: " + esp32.readline().decode())
+
+
+        # # Check if the error is less than 10 arcseconds
+        # if abs(ra_error) < astrid.raWindow and abs(dec_error) < astrid.decWindow:
+        #     # Send an instruction of 0 steps
+        #     esp32.write(f"{0} {0}\n".encode())
+        # else:                  
+        #     # Send the number of microsteps to the controller.ino
+        #     esp32.write(f"{int(ra_error)} {int(dec_error)}\n".encode())
+        
+        # # Wait for the controller.ino to finish the previous command
+        # while esp32.in_waiting == 0:
+        #     time.sleep(0.1)
+
+        # #need to read and remove everything in buffer
+        # esp32.reset_input_buffer()
         
 
 
