@@ -8,7 +8,7 @@ const int decDirPin = 14;   //DEC DIR - Direction
 
 const float siderealSecs = 86164.0905; //seconds in a sidereal day
 const int reduction = 30 * 26.85; //total gear reduction
-const int microsteps = 32; //current microstep setting
+const int microsteps = 1; //current microstep setting
 
 int raSteps;
 int decSteps;
