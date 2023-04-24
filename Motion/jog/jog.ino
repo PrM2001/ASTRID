@@ -65,7 +65,7 @@ void loop() {
   }
   raStepsInt = abs(raStepsInt);
 
-  if (decStepsInt > 0){
+  if (decStepsInt < 0){
     digitalWrite(decDirPin,HIGH);
   }
   else {

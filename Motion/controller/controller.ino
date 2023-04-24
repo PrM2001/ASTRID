@@ -13,32 +13,51 @@ const int microsteps = 8; //current microstep setting
 const int pulseTime = 100; //this is in microseconds
 const int delayTime = 0.5; //this is in milliseconds
 
+
+
 int stepsMissed;
 
-const long siderealRate = 360 * (1/siderealSecs); //degrees per second for tracking
+const long siderealRate = 360 * (1/siderealSecs); //degrees per second for tracking 
 const long siderealRateDelay = 1/(siderealRate * reduction * microsteps / (1.8*1000000)); // microseconds delay between each RA microstep, 
 
-const float stepsPerDeg = reduction/(1.8/microsteps)
+const float stepsPerDeg = reduction/(1.8/microsteps);
 
 
 int lastCommand = millis();
 int startMotion = millis();
 int endMotion = millis();
 
+long lastTick = micros();
+
 float correction;
 
-String ackString
+String ackString;
+String raStepsStr;
+String decStepsStr;
+
+int raStepsInt;
+int decStepsInt;
 
 void askForCommand() {
-  Serial.print(" ");
+  Serial.print("ask\n");
 }
 
 void doIdleStep() {
-      digitalWrite(raStepPin,HIGH); 
-      delayMicroseconds(pulseTime); 
-      digitalWrite(raStepPin,LOW); 
-      delayMicroseconds(pulseTime);
-      delayMicroseconds(siderealRateDelay - 2 * pulseTime);  
+  // digitalWrite(raDirPin, LOW);
+  // digitalWrite(raStepPin,HIGH); 
+  // delayMicroseconds(pulseTime); 
+  // digitalWrite(raStepPin,LOW); 
+  // delayMicroseconds(pulseTime);
+  //delay(2*delayTime);
+  if (micros() - lastTick > siderealRateDelay) {
+    lastTick = micros();
+    digitalWrite(decStepPin,HIGH); 
+    delayMicroseconds(pulseTime); 
+    digitalWrite(decStepPin,LOW); 
+    delayMicroseconds(pulseTime);
+  }
+
+  delay(delayTime); 
 }
 
 void doMotion(int raSteps, int decSteps) {
@@ -52,7 +71,7 @@ void doMotion(int raSteps, int decSteps) {
 
 
   //switch this high and low if spins the wrong way (or just the inequality)
-  if (decSteps > 0){
+  if (decSteps < 0){
     digitalWrite(decDirPin,HIGH);
   }
   else {
@@ -102,11 +121,11 @@ void doMotion(int raSteps, int decSteps) {
 }
 
 void makeUpIdle(int missedTime){
-  stepsMissed = (missedTime * 1000) / siderealRateDelay
-  digitalWrite(raDirPin,HIGH)
+  stepsMissed = (missedTime * 1000) / siderealRateDelay;
+  digitalWrite(raDirPin,HIGH);
   
   //uncomment this if need be after testing the rest of makeUpIdle
-  correction = 1 //+ (2*pulseTime/1000 + delayTime)/missedTime
+  correction = 1; //+ (2*pulseTime/1000 + delayTime)/missedTime;
   
   for (int i = 0; i < stepsMissed * correction; i++) {  
     digitalWrite(raStepPin,HIGH); 
@@ -140,7 +159,7 @@ void loop() {
     decStepsInt = decStepsStr.toInt();
 
     //combine into one print line
-    ackString = "Received RA Value: "+raStepsStr + " and Dec Value: " + decStepsStr
+    ackString = "Received RA Value: "+raStepsStr + " and Dec Value: " + decStepsStr;
     Serial.println(ackString);
 
     doMotion(raStepsInt, decStepsInt);

@@ -33,8 +33,8 @@ class ASTRID:
         self.raWindow = 40/3600
         self.decWindow = 40/3600
 
-        self.gearReduction = 26.85 * 30
-        self.microSteps = 8
+        self.reduction = 26.85 * 30
+        self.microsteps = 8
 
     def isUnsafe(self, ra, dec):
         return (ra < self.raBounds[0] or ra > self.raBounds[1] or dec < self.decBounds[0] or dec > self.decBounds[1])
@@ -46,14 +46,15 @@ class ASTRID:
 
         if paths:
             impath = paths[-1]
-            print('Solving for image at: ' + str(impath))
+            print('Solving for image at: ' + str(impath), flush=True)
             with Image.open(str(impath)) as img:
                 solved = self.t3.solve_from_image(img)  # Adding e.g. fov_estimate=11.4, fov_max_error=.1 improves performance
             ra = solved.get('RA')
             dec = solved.get('Dec')
 
             for oldPath in paths:
-                os.remove(oldPath)
+                #os.remove(oldPath)
+                pass
 
             return (ra, dec)
         else:
@@ -81,12 +82,12 @@ class ASTRID:
 
             return(ra, dec)
 
-        elif len(argv) == 3 and all(int_arg.strip('-').isnumeric() for int_arg in argv[1:]):
+        elif len(argv) == 3:
             ra = float(argv[1])
             dec = float(argv[2])
             if self.isUnsafe(ra, dec):
                 raise SystemExit('\nThe object is out of safe RA and Dec bounds!\n')
-            return float(argv[2]), float(argv[3])
+            return ra, dec
         
         else:
             raise SystemExit("\nInputs should be a planet or an integer for RA and Dec YOU FOOL\n")
@@ -106,17 +107,18 @@ class ASTRID:
 
 def main(): 
     # Open a serial connection to the controller.ino
-    esp32 = serial.Serial(port='COM4', baudrate=115200, timeout=.1) # Change 'COM3' to the actual port number
+    esp32 = serial.Serial(port='COM3', baudrate=115200, timeout=.1) # Change 'COM3' to the actual port number
     
     #Instantiate and ASTRID object
     astrid = ASTRID()
 
     #remove all previous images
     for impath in astrid.path.glob('test/*.jpg'):
-        os.remove(impath)
+        #os.remove(impath)
+        pass
 
     while True:
-        print("new main loop beginning")
+        print("new main loop beginning", flush=True)
         #set all the coordinates to None for the check below
         current_ra, current_dec, desired_ra, desired_dec = None, None, None, None
 
@@ -124,7 +126,7 @@ def main():
         while None in (current_ra, current_dec, desired_ra, desired_dec):
             current_ra, current_dec, desired_ra, desired_dec = astrid.observe(sys.argv)
             if (None in (current_ra, current_dec, desired_ra, desired_dec)):
-                print('Could not find lock')
+                print('Could not find lock', flush=True)
             time.sleep(0.5)
         
         # Calculate the number of microsteps for each axis
@@ -158,11 +160,12 @@ def main():
         #when we get here, pythn will have received some acknowledgment
 
         while esp32.inWaiting() > 0: #while there are still acknowledgement messages, read them all out and print them
-            print("From ESP32: " + esp32.readline().decode())
+            print("From ESP32: " + esp32.readline().decode(), flush=True)
         
         
         while esp32.inWaiting() < 1 : #wait until esp32 asks for a new command
-            time.sleep(0.2)
+            print("Zero items in input buffer. waiting for esp32 to say smth")
+            #pass
         esp32.flushInput()
 
 
