@@ -114,8 +114,6 @@ def main():
     #remove all previous images
     for impath in astrid.path.glob('test/*.jpg'):
         os.remove(impath)
-    
-
 
     while True:
         print("new main loop beginning")
@@ -158,7 +156,6 @@ def main():
             time.sleep(0.05)
 
         #when we get here, pythn will have received some acknowledgment
-
 
         while esp32.inWaiting() > 0: #while there are still acknowledgement messages, read them all out and print them
             print("From ESP32: " + esp32.readline().decode())
