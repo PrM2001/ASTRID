@@ -10,14 +10,13 @@ const float siderealSecs = 86164.0905; //seconds in a sidereal day
 const int reduction = 30 * 26.85; //total gear reduction
 const int microsteps = 8; //current microstep setting
 
-const int pulseTime = 100;
-const int delayTime = 0.5;
+const int pulseTime = 100; //this is in microseconds
+const int delayTime = 0.5; //this is in milliseconds
 
 int stepsMissed;
 
-
 const long siderealRate = 360 * (1/siderealSecs); //degrees per second for tracking
-const long siderealRateDelay = 1/(siderealRate * reduction * microsteps / 1000000); // microseconds delay between each RA microstep, 
+const long siderealRateDelay = 1/(siderealRate * reduction * microsteps / (1.8*1000000)); // microseconds delay between each RA microstep, 
 
 const float stepsPerDeg = reduction/(1.8/microsteps)
 
@@ -27,6 +26,8 @@ int startMotion = millis();
 int endMotion = millis();
 
 float correction;
+
+String ackString
 
 void askForCommand() {
   Serial.print(" ");
@@ -49,6 +50,8 @@ void doMotion(int raSteps, int decSteps) {
   }
   raSteps = abs(raSteps);
 
+
+  //switch this high and low if spins the wrong way (or just the inequality)
   if (decSteps > 0){
     digitalWrite(decDirPin,HIGH);
   }
@@ -102,7 +105,8 @@ void makeUpIdle(int missedTime){
   stepsMissed = (missedTime * 1000) / siderealRateDelay
   digitalWrite(raDirPin,HIGH)
   
-  correction = 1 + (2*pulseTime/1000 + delayTime)/missedTime
+  //uncomment this if need be after testing the rest of makeUpIdle
+  correction = 1 //+ (2*pulseTime/1000 + delayTime)/missedTime
   
   for (int i = 0; i < stepsMissed * correction; i++) {  
     digitalWrite(raStepPin,HIGH); 
@@ -111,13 +115,6 @@ void makeUpIdle(int missedTime){
     delayMicroseconds(pulseTime);
     delay(delayTime);
   }
-
-
-
-
-  
-
-
 }
 
 void setup() {
@@ -135,28 +132,38 @@ void loop() {
 
   if (Serial.available()) {
     startMotion = millis();
-
+    //ra_steps+','+dec_steps+','
     raStepsStr = Serial.readStringUntil(',');
     raStepsInt = raStepsStr.toInt();
-    Serial.print("Received RA Value: ");
-    Serial.println(raStepsStr);
-    
+
     decStepsStr = Serial.readStringUntil(',');
     decStepsInt = decStepsStr.toInt();
-    Serial.print("Received Dec Value: ");
-    Serial.println(decStepsStr);
+
+    //combine into one print line
+    ackString = "Received RA Value: "+raStepsStr + " and Dec Value: " + decStepsStr
+    Serial.println(ackString);
 
     doMotion(raStepsInt, decStepsInt);
 
     endMotion = millis();
-    makeUpIdle(endMotion-startMotion);
+    
+    //uncomment this after everything else is working
+    //makeUpIdle(endMotion-startMotion);
 
     lastCommand = millis();     
   }
 
-  if (!((raStepsInt == 0) && (decStepsInt == 0)) || (millis() - lastCommand > 10000)){
-    askForCommand();    
+  if (millis() - lastCommand > 5000) {
+    askForCommand(); 
   }
+  else if (!((raStepsInt == 0) && (decStepsInt == 0))) {
+    askForCommand();    
+  }  
+
+  //   //not(    (close to target)  or  (been more than ten seconds)  )
+  // if ( !   ((raStepsInt == 0) && (decStepsInt == 0)) || (millis() - lastCommand > 5000) ){
+  //   askForCommand();    
+  // }
 }
 
 // void loop() {

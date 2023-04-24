@@ -30,8 +30,8 @@ class ASTRID:
         
         self.raBounds = [0,360]
         self.decBounds = [-90, 90]
-        self.raWindow = 40
-        self.decWindow = 40
+        self.raWindow = 40/3600
+        self.decWindow = 40/3600
 
         self.gearReduction = 26.85 * 30
         self.microSteps = 8
@@ -44,17 +44,20 @@ class ASTRID:
 
         paths = sorted(self.path.glob('test/*.jpg')) #change this folder
 
-        impath = paths[-1]
-        print('Solving for image at: ' + str(impath))
-        with Image.open(str(impath)) as img:
-            solved = self.t3.solve_from_image(img)  # Adding e.g. fov_estimate=11.4, fov_max_error=.1 improves performance
-        ra = solved.get('RA')
-        dec = solved.get('Dec')
+        if paths:
+            impath = paths[-1]
+            print('Solving for image at: ' + str(impath))
+            with Image.open(str(impath)) as img:
+                solved = self.t3.solve_from_image(img)  # Adding e.g. fov_estimate=11.4, fov_max_error=.1 improves performance
+            ra = solved.get('RA')
+            dec = solved.get('Dec')
 
-        for oldPath in paths:
-            os.remove(oldPath)
+            for oldPath in paths:
+                os.remove(oldPath)
 
-        return(ra, dec)
+            return (ra, dec)
+        else:
+            return (None, None)
 
         # for impath in sorted(self.path.glob('test/*.jpg')): 
         #     print('Solving for image at: ' + str(impath))
@@ -115,10 +118,7 @@ def main():
 
 
     while True:
-        while esp32.inWaiting() < 1:
-            time.sleep(0.2)
-        esp32.flushInput()
-
+        print("new main loop beginning")
         #set all the coordinates to None for the check below
         current_ra, current_dec, desired_ra, desired_dec = None, None, None, None
 
@@ -150,11 +150,23 @@ def main():
 
         msg = ra_steps+','+dec_steps+',' 
 
+
+        #A (have sent esp some code)
         esp32.write(msg.encode())
-        while esp32.inWaiting() < 1:
-            pass
-        while esp32.inWaiting() > 0:
-            print("ESP32: " + esp32.readline().decode())
+
+        while esp32.inWaiting() < 1: #wait for acknowledgement from esp32
+            time.sleep(0.05)
+
+        #when we get here, pythn will have received some acknowledgment
+
+
+        while esp32.inWaiting() > 0: #while there are still acknowledgement messages, read them all out and print them
+            print("From ESP32: " + esp32.readline().decode())
+        
+        
+        while esp32.inWaiting() < 1 : #wait until esp32 asks for a new command
+            time.sleep(0.2)
+        esp32.flushInput()
 
 
         # # Check if the error is less than 10 arcseconds
