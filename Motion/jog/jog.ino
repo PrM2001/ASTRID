@@ -11,7 +11,7 @@ const int decDirPin = 32;   // Dec DIR - Dec Direction
 
 
 const int reduction = 30 * 26.85; //total gear reduction
-const int microsteps = 1; //current microstep setting
+const int microsteps = 8; //current microstep setting
 
 String raStepsStr;
 String decStepsStr;

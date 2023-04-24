@@ -17,9 +17,10 @@ def jog():
     while True:
         while ser.inWaiting() < 1:
             time.sleep(0.2)
+            print("I am wating!")
         ser.flushInput()
 
-        raAngle = input("Enter RA angle to move in degrees:\n")
+        raAngle = input("Enter RA angle to move in degrees (POSITIVE IS CCW):\n")
         raSteps =  str(int(float(raAngle) /(1.8/(reduction))))
 
         ser.write(raSteps.encode())
@@ -29,7 +30,7 @@ def jog():
             print("ESP32: " + ser.readline().decode())
 
 
-        decAngle = input("Enter Dec angle to move in degrees:\n")
+        decAngle = input("Enter Dec angle to move in degrees (POSITIVE IS CCW):\n")
         decSteps = str(int(float(decAngle) /(1.8/(reduction))))
 
         ser.write(decSteps.encode())
