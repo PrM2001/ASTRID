@@ -8,7 +8,7 @@ reduction = 26.85 * 30 * 8
 def jog():
     # configure the serial connections (the parameters differs on the device you are connecting to)
     ser = serial.Serial(
-        port='COM3',
+        port='COM6',
         baudrate=115200,
     )
 

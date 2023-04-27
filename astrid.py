@@ -34,7 +34,7 @@ class ASTRID:
         self.decWindow = 40/3600
 
         self.reduction = 26.85 * 30
-        self.microsteps = 8
+        self.microsteps = 1
 
     def isUnsafe(self, ra, dec):
         return (ra < self.raBounds[0] or ra > self.raBounds[1] or dec < self.decBounds[0] or dec > self.decBounds[1])
@@ -51,9 +51,10 @@ class ASTRID:
                 solved = self.t3.solve_from_image(img)  # Adding e.g. fov_estimate=11.4, fov_max_error=.1 improves performance
             ra = solved.get('RA')
             dec = solved.get('Dec')
+            print (str(ra) + " " + str(dec), flush=True)
 
             for oldPath in paths:
-                #os.remove(oldPath)
+                os.remove(oldPath)
                 pass
 
             return (ra, dec)
@@ -164,8 +165,8 @@ def main():
         
         
         while esp32.inWaiting() < 1 : #wait until esp32 asks for a new command
-            print("Zero items in input buffer. waiting for esp32 to say smth")
-            #pass
+            # print("Zero items in input buffer. waiting for esp32 to say smth")
+            pass
         esp32.flushInput()
 
 
